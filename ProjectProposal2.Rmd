@@ -37,10 +37,11 @@ SportsCars <- unique(SportsCars)
 SportsCars <- SportsCars %>% 
   filter(!grepl("Electric", engine_size_l)) %>% 
   mutate(across(engine_size_l:x0_60_mph_time_seconds, as.numeric))
-gf_density(~price_in_usd/1000, data=SportsCars, xlab="Price in 1000s of USD") #specify 1000s, response variable
+r1<-gf_density(~price_in_usd/1000, data=SportsCars, xlab="Price in 1000s of USD") #specify 1000s, response variable
 favstats(~price_in_usd, data=SportsCars) #IQR test 1.5, 1.5(IQR=152720)=229080, data range from $298980 to $451700 if we use the IQR to determine outliers
-gf_boxplot(~year, data=SportsCars)
+r2<-gf_boxplot(~year, data=SportsCars)
 favstats(~year, data=SportsCars) #IQR test 1.5, 1.5(IQR=1)=1.5, data range from 2019 to 2023
+grid.arrange(r1, r2, ncol=2, heights=c(6, 3)) 
 ```
 
 ```{r warning=FALSE}
@@ -49,13 +50,8 @@ m2<-gf_dens(~ torque_lb_ft, data = SportsCars, color = "deepskyblue")
 m3<-gf_dens(~ engine_size_l, data = SportsCars, color = "pink4")
 m4<-gf_dens(~ x0_60_mph_time_seconds, data = SportsCars,  xlab="0 to 60mph time in seconds", color = "purple")
 ```
-
-
 ```{r warning=FALSE}
-tally(~car_make, data = SportsCars) #we figured this would be the better than a pie chart, likely to throw out makes that are singular 
-tally(~car_model, data= SportsCars)
 m5<-gf_bar (~car_make, data= SportsCars)
 m6<-gf_bar (~car_model, data= SportsCars)
-grid.arrange(m1, m2, m3, m4, m5, m6, ncol=3, heights=c(4, 4))
-
+grid.arrange(m1, m2, m3, m4, m5, m6, ncol=3, heights=c(2, 2))
 ```
