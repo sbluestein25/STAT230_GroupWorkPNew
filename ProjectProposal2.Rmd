@@ -22,7 +22,11 @@ library(readr)
 library(mosaic)
 library(mosaicData)
 library(GGally)
-library(readr)
+library(Stat2Data)
+library(leaps)
+library(broom)
+library(rvest)
+library(methods)
 require("gridExtra")
 Sport_car_price <- read_csv("~/Desktop/STAT230/Sport car price.csv")
 ```
@@ -34,9 +38,9 @@ SportsCars <- SportsCars %>%
   filter(!grepl("Electric", engine_size_l)) %>% 
   mutate(across(engine_size_l:x0_60_mph_time_seconds, as.numeric))
 gf_density(~price_in_usd/1000, data=SportsCars, xlab="Price in 1000s of USD") #specify 1000s, response variable
-favstats(~price_in_usd, data=SportsCars)
-
-gf_boxplot(~year, data=SportsCars) #this needs to be smaller?
+favstats(~price_in_usd, data=SportsCars) #IQR test 1.5, 1.5(IQR=152720)=229080, data range from $298980 to $451700 if we use the IQR to determine outliers
+gf_boxplot(~year, data=SportsCars)
+favstats(~year, data=SportsCars) #IQR test 1.5, 1.5(IQR=1)=1.5, data range from 2019 to 2023
 ```
 
 ```{r warning=FALSE}
@@ -50,7 +54,6 @@ m4<-gf_dens(~ x0_60_mph_time_seconds, data = SportsCars,  xlab="0 to 60mph time 
 ```{r warning=FALSE}
 tally(~car_make, data = SportsCars) #we figured this would be the better than a pie chart, likely to throw out makes that are singular 
 tally(~car_model, data= SportsCars)
-
 m5<-gf_bar (~car_make, data= SportsCars)
 m6<-gf_bar (~car_model, data= SportsCars)
 grid.arrange(m1, m2, m3, m4, m5, m6, ncol=3, heights=c(4, 4))
