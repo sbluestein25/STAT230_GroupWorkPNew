@@ -10,7 +10,7 @@ Research Question/Purpose: Who doesn’t love a cool sports car? Parker’s dad 
 
 Data: We pulled data from the Kaggle Data Explorer. (It appears like Kaggle is not very highly regulated, so we should proceed with caution). This dataset was created to identify market trends relating to sports car prices. The author of this dataset did not mention how they selected which cars to include in the set; therefore, we should proceed with caution.
 
-Population: This data set is specific to sports cars from various manufacturers. Therefore, it would likely not be wise to expand this model to all cars or car manufacturers outside of the manufacturers included in the data set. The data set from Kaggle is a sample from sports cars in America, so we hope to be able to use this model as a way to predict the price of sports cars in the US so that hopeful owners can get the right car for the right price.
+Population: This data set contains sports cars from various manufacturers worldwide. Therefore, it would not be wise to expand this model to all cars or car manufacturers outside of those included in the data set. The IQR includes cars produced in the years 2014-2019. Thus, we should not predict the price of cars produced anywhere outside the range of this range. The data set from Kaggle is a sample from sports cars in America, so we hope to be able to use this model as a way to predict the price of sports cars in the US so that hopeful owners can get the right car for the right price. 
 
 Response Variable: Our response variable is the price of sports cars. This is a quantitative variable that is measured in US dollars. Sports car price is not normally distributed, as the data is skewed right. The median sports car price is $140,000. The IQR is 178,200 dollars.
 
