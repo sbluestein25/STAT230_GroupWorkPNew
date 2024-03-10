@@ -33,6 +33,7 @@ Sport_car_price <- read_csv("~/Desktop/STAT230/Sport car price.csv")
 
 ```{r warning=FALSE}
 SportsCars <- janitor::clean_names(Sport_car_price)
+SportsCars[-c(94, 154, 409), ] %>% head()
 SportsCars <- unique(SportsCars)
 SportsCars <- SportsCars %>% 
   filter(!grepl("Electric", engine_size_l)) %>% 
