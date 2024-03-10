@@ -41,7 +41,7 @@ r1<-gf_density(~price_in_usd/1000, data=SportsCars, xlab="Price in 1000s of USD"
 favstats(~price_in_usd, data=SportsCars) #IQR test 1.5, 1.5(IQR=152720)=229080, data range from $298980 to $451700 if we use the IQR to determine outliers
 r2<-gf_boxplot(~year, data=SportsCars)
 favstats(~year, data=SportsCars) #IQR test 1.5, 1.5(IQR=1)=1.5, data range from 2019 to 2023
-grid.arrange(r1, r2, ncol=2, heights=c(6, 3)) 
+grid.arrange(r1, r2, ncol=2, heights=c(2, 2))
 ```
 
 ```{r warning=FALSE}
