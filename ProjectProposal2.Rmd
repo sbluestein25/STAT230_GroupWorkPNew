@@ -38,7 +38,7 @@ Cars <- Cars %>%
   filter(!grepl("Electric", engine_size_l)) %>% 
   mutate(across(engine_size_l:x0_60_mph_time_seconds, as.numeric))
 Cars2<-Cars[-c(94, 150, 154, 409),] #deletes middle eastern cars and super old car
-Cars3<-filter(Cars2, price_in_usd<500000)
+Cars3<-filter(Cars2, price_in_usd<500000) #removed data from IQR test below
 Cars4<-na.omit(Cars3)
 ## MAR: Recategorized into "Asian", "Domestic", and "European"
 SportsCars <- Cars4 %>% mutate(car_make = case_when(
