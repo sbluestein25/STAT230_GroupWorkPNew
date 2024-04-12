@@ -128,3 +128,10 @@ mplot(zerotosixtySLR3, which=1)
 mplot(zerotosixtySLR3, which=2)
 ```
 
+
+
+```{r}
+stepwise <- regsubsets(price_in_usd ~ year + engine_size_l + horsepower + torque_lb_ft + x0_60_mph_time_seconds, data = SportsCars, method = "seqrep", nbest = 1)
+with(summary(stepwise), data.frame(cp, outmat))
+```
+
