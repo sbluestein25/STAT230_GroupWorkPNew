@@ -159,6 +159,9 @@ with(summary(stepwise), data.frame(cp, outmat)) #scrapped torque_lb_ft because o
 favmod<- lm(price_in_usd ~ year + engine_size_l + horsepower, data=SportsCars)
 msummary(favmod)
 car::vif(favmod) #best model according to stepwise
+
+mplot(favmod, which=1) 
+mplot(favmod, which=2) 
 ```
 
 Next, we will attempt to run an ANOVA with the factor car_make, or the car region of origin. The results will allow us to determine if the geographical region of production affects the price enough to add it to a potential multivariate model. This factor has three categories: Asian, European, and Domestic. To get a better sense of this categorical variable, we compared box plots of each category. Immediately, we see that the European cars have a much higher standard deviation than both other categories, but especially domestic cars. Although this could be due to smaller sample sizes of Domestic and Asian car brands, in order to compare the categories at all, we need to check the requisite conditions to run an ANOVA.
@@ -229,3 +232,42 @@ SportsCars <- SportsCars %>% mutate(car_make = case_when(
     car_make %in% c("Asian") ~ 0,
     car_make %in% c("Domestic") ~ 0,
     car_make %in% c("European") ~ 1))
+MLR5<- lm(price_in_usd ~ year + engine_size_l + horsepower + car_make, data=SportsCars)
+msummary(MLR5)
+mplot(MLR5, which = 1)
+mplot(MLR5, which = 2)
+```
+
+```{r}
+set.seed(40)
+randomizedsamples1 <- do(10000) * (anova(lm(shuffle(logprice) ~ car_make, data = SportsCars))$"F value")
+randomizedsamples1 <- as.data.frame(randomizedsamples1)
+```
+
+```{r}
+anova(loglocation)
+origres1 <- anova(loglocation)$"F value"#
+origres1
+```
+
+```{r}
+gf_dens(~ V1, data = randomizedsamples1) %>%
+  gf_lims(x = c(0, 25)) %>%
+  gf_labs(title = "Randomization Distribution for Car Make from ANOVA")
+```
+
+```{r}
+pdata(~ V1, origres[1], data = randomizedsamples1, lower.tail = FALSE)
+```
+
+
+```{r}
+MLR6<- lm(logprice ~ year + engine_size_l + horsepower + car_make, data=SportsCars)
+msummary(MLR6)
+mplot(MLR6, which = 1)
+mplot(MLR6, which = 2)
+```
+
+```{r}
+mplot(MLR6, which = 4)
+```
