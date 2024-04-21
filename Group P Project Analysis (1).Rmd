@@ -14,6 +14,7 @@ library(leaps)
 library(broom)
 library(rvest)
 library(methods)
+library(knitr)
 require("gridExtra")
 Sport_car_price <- read_csv("~/Desktop/STAT230/Sport car price.csv")
 ```
@@ -49,12 +50,25 @@ m2<-gf_dens(~ torque_lb_ft, data = SportsCars, color = "deepskyblue")
 m3<-gf_dens(~ engine_size_l, data = SportsCars, color = "pink2")
 m4<-gf_dens(~ x0_60_mph_time_seconds, data = SportsCars,  xlab="0 to 60mph time in seconds", color = "purple")
 ```
+
 ```{r warning=FALSE}
 m5<-gf_bar (~car_make, data= SportsCars)
 m6<-gf_boxplot(~year, data=SportsCars)
-favstats(~year, data=SportsCars) #IQR test 1.5, 1.5(IQR=1)=1.5, data range from 2019 to 2023
+kable(favstats(~year, data = SportsCars), caption = "Year")  #IQR test 1.5, 1.5(IQR=1)=1.5, data range from 2019 to 2023
+kable(favstats(~horsepower, data = SportsCars), caption = "Horsepower")
+kable(favstats(~torque_lb_ft, data = SportsCars), caption = "Torque (lb-ft)")
+kable(favstats(~engine_size_l, data = SportsCars), caption = "Engine Size")
+kable(favstats(~x0_60_mph_time_seconds, data = SportsCars), caption = "0 to 60 mph time")
 grid.arrange(m1, m2, m3, m4, m5, m6, ncol=3, heights=c(2, 2, 2))
 ```
+Horsepower - The plot shows a bimodal distribution with peaks around 450 horsepower and 600 horsepower, indicating two prevalent groups of sports cars with distinct power outputs in this dataset. The median of 505 horsepower indicates that half of the cars have horsepower above this value, and half below, showcasing the central tendency of the distribution. The maximum horsepower is 797, highlighting the presence of very high-powered vehicles within the dataset. The mean horsepower is approximately 527.6345, which is close to the median, reinforcing the bimodal distribution seen in the density plot as it suggests a symmetry in the distribution of values. Additionally, the standard deviation of about 132.5269 horsepower indicates a moderate spread around the mean.
+
+Torque - The density plot for the torque (measured in pound-feet) of sports cars in the dataset shows a bimodal distribution with peaks roughly around 300 and 500 lb-ft, suggesting two prevalent groups of sports cars based on their torque characteristics. The minimum torque is 151 lb-ft, indicating the lowest torque present in a sports car in this dataset. The median of 468 lb-ft represents the middle value, where half the cars have more torque and the other half have less. The maximum value is 738 lb-ft, showcasing some sports cars with very high torque outputs. The mean torque is around 472.5279 lb-ft, which is very close to the median, indicating a relatively symmetrical distribution around the central value. The standard deviation of approximately 126.1966 lb-ft indicates a moderate variability in the torque figures across the dataset.
+
+Engine Size - The density plot for engine size (in liters) reveals a bimodal distribution with two prominent peaks: one just below 4 liters and another around 5 liters. The minimum size of 1.5 liters and a maximum of 8.4 liters, suggesting a wide range of engine sizes among the sports cars. The median engine size is 4 liters, which lies between the two peaks of the density plot, and the mean engine size is approximately 4.27 liters, indicating a slight skew to the right. The standard deviation is around 1.33 liters, which points to a relatively wide spread of engine sizes in the dataset. The mean being greater than the median suggests a right skew in the data, indicating that there are sports cars with larger engine sizes that are pulling the average to the right. This skew is likely not very strong but does suggest the presence of more sports cars with higher engine sizes than those with smaller ones.
+
+0 to 60 MPH Time - The density plot for the 0 to 60 mph acceleration timesshows that the most common acceleration time is around 3.5 seconds, which is where the peak of the density occurs. The range of acceleration times is from 2.5 seconds to 6.5 seconds, with a median time of 3.6 seconds. The mean acceleration time is slightly higher at 3.775804 seconds, suggesting a slight right skew in the distribution. This is further supported by the mean being greater than the median, implying that there are more sports cars with slightly slower acceleration times pulling the average to the right. The standard deviation of about 0.673926 seconds shows a relatively tight clustering of times around the mean.
+
 Step 2 – Bivariate Analysis: 
 We will begin with simple linear regression to gauge which explanatory variables help predict sports car prices. It will be time-efficient to begin with GGpairs as a summary of the relationships between our explanatory variables and sports car prices. Upon the first glimpse, the GGpairs plot demonstrates that horsepower (r=0.648) and 0-60 (r=-0.554) may be helpful predictors for sports car prices. We plan to explore this relationship further by creating simple linear regression models. To check for linearity, we can look either at the SLR plot or the residuals vs. fitted plot to ensure the relationship between our predictor variable and sports car price is best described as linear. Independence is not a condition we can assume from a plot. (We have very little information regarding the origin of this dataset, so we will have to proceed with caution). Looking at whether the data points fit well on the expected line QQ plot line will allow us to decide whether the normality condition is satisfied. We will confirm homoscedasticity for the equal variance condition by looking for a seemingly random distribution of points on the residuals vs. fitted plot. If we encounter any issues with conditions, we will look into removing potential outliers or transforming the data if necessary. 
 
@@ -211,7 +225,7 @@ TukeyHSD(location)
 Since there is evidence that European cars are significantly more expensive than Asian or Domestic makes, we will attempt to add an indicator variable to our best multiple linear regression model to determine if it reduces the error. By indicating all European cars with a "1" and all others with a "0", we can add the variable to our model. 
 
 ```{r}
-IndSportsCars <- SportsCars %>% mutate(car_make = case_when(
+SportsCars <- SportsCars %>% mutate(car_make = case_when(
     car_make %in% c("Asian") ~ 0,
     car_make %in% c("Domestic") ~ 0,
     car_make %in% c("European") ~ 1))
