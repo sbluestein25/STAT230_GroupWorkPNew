@@ -142,9 +142,9 @@ car::vif(kitchen1) #x_60_mph_time_seconds not significant
 stepwise <- regsubsets(price_in_usd ~ year + engine_size_l + horsepower + x0_60_mph_time_seconds, data = SportsCars, method = "seqrep", nbest = 1)
 with(summary(stepwise), data.frame(cp, outmat)) #scrapped torque_lb_ft because of high correlation with horsepower 
 
-MLR4<- lm(price_in_usd ~ year + engine_size_l + horsepower, data=SportsCars)
-msummary(MLR4)
-car::vif(MLR4) #best model according to stepwise
+favmod<- lm(price_in_usd ~ year + engine_size_l + horsepower, data=SportsCars)
+msummary(favmod)
+car::vif(favmod) #best model according to stepwise
 ```
 
 Next, we will attempt to run an ANOVA with the factor car_make, or the car region of origin. The results will allow us to determine if the geographical region of production affects the price enough to add it to a potential multivariate model. This factor has three categories: Asian, European, and Domestic. To get a better sense of this categorical variable, we compared box plots of each category. Immediately, we see that the European cars have a much higher standard deviation than both other categories, but especially domestic cars. Although this could be due to smaller sample sizes of Domestic and Asian car brands, in order to compare the categories at all, we need to check the requisite conditions to run an ANOVA.
