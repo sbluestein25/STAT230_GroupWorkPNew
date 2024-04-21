@@ -85,65 +85,30 @@ SLR:
 Horsepower and 0-60 appeared to be our strongest predictors for car price. However the scatterplot of horsepower vs. car price proved to be pretty curvy. I attempted to transform the data by predicting log (car price) rather than car price, log(horsepower) instead of horsepower, etc. However, conditions still were not met. Similarly for 0-60, conditions were not met for SLR. I removed an outlier, representing a car with extremely high torque and horsepower. I believed this point was pulling the regression line down. After removing this point, I then transformed the data by having -1/sqrt(0-60) predict price. However, conditions for SLR still failed to be met. I then wanted to check if using horsepower and 0-60 together would provide a better fitting model than the predictors on their own. Most of the points in the fitted vs. residuals plot are shifted to the right, demonstrating that there is not perfectly equal variance. Also the QQ plot appears curvy, however it looks less sigmoidal than any of the SLR model QQ plots. Though conditions are still not met perfectly, this model fits better than either of the SLR models. We will consider this bivariate model with caution.
 
 ```{r}
-
-gf_point(price_in_usd ~horsepower, data=SportsCars) %>% gf_lm()
-horsepowerSLR<- lm(price_in_usd ~horsepower, data=SportsCars) 
-msummary(horsepowerSLR)
-mplot(horsepowerSLR, which=1)
-mplot(horsepowerSLR, which=2)
-SportsCars <- mutate(SportsCars, horsepowerlog = log(horsepower)) 
-gf_point(price_in_usd ~horsepowerlog, data=SportsCars) %>% gf_lm()
-horsepowerSLR3<- lm(price_in_usd ~horsepowerlog, data=SportsCars) 
-msummary(horsepowerSLR3)
-mplot(horsepowerSLR3, which=1)
-mplot(horsepowerSLR3, which=2)
 SportsCars <- mutate(SportsCars, logprice = log(price_in_usd))
 horsepowerSLR2<- lm(logprice ~horsepower, data=SportsCars) 
 msummary(horsepowerSLR2)
-mplot(horsepowerSLR2, which=1)
-mplot(horsepowerSLR2, which=2)
+mplot(horsepowerSLR2, which=1:2)
 ```
 
 
 ```{r}
 SportsCars <- filter(SportsCars, torque_lb_ft<1299)
 SportsCars <- mutate(SportsCars, logprice = log(price_in_usd)) 
-gf_point(logprice ~horsepower, data=SportsCars) %>%
+gf_point(logprice ~x0_60_mph_time_seconds, data=SportsCars) %>%
 gf_lm()
-
+zerotosixtymod<-lm(logprice ~x0_60_mph_time_seconds, data=SportsCars)
+mplot(zerotosixtymod, which=1)
+mplot(zerotosixtymod, which=2)
 ```
 
 
 ```{r}
-aovmultiplecars<- lm(price_in_usd ~x0_60_mph_time_seconds + horsepower, data=SportsCars) 
-msummary(aovmultiplecars)
-mplot(aovmultiplecars, which=1)
-mplot(aovmultiplecars, which=2)
-SportsCars<- mutate(SportsCars, logprice= log(price_in_usd))
 aovbivariate2<-lm(logprice ~x0_60_mph_time_seconds + horsepower, data=SportsCars) 
 msummary(aovbivariate2)
 mplot(aovbivariate2, which=1)
 mplot(aovbivariate2, which=2)
 ```
-
-
-```{r}
-gf_point(price_in_usd ~x0_60_mph_time_seconds, data=SportsCars) %>% gf_lm()
-zerotosixtySLR<- lm(price_in_usd ~x0_60_mph_time_seconds, data=SportsCars) 
-msummary(zerotosixtySLR)
-mplot(zerotosixtySLR, which=1)
-mplot(zerotosixtySLR, which=2)
-SportsCars <- mutate(SportsCars, zerotosixtyspecial = -1/sqrt(x0_60_mph_time_seconds)) 
-gf_point(price_in_usd ~ zerotosixtyspecial, data=SportsCars) %>%
-gf_lm()
-zerotosixtySLR3<- lm(price_in_usd ~ zerotosixtyspecial, data=SportsCars) 
-msummary(zerotosixtySLR3)
-mplot(zerotosixtySLR3, which=1)
-mplot(zerotosixtySLR3, which=2)
-```
-
-
-
 ```{r}
 kitchen1<- lm(price_in_usd ~ year + engine_size_l + horsepower + torque_lb_ft + x0_60_mph_time_seconds, data=SportsCars) 
 msummary(kitchen1) 
