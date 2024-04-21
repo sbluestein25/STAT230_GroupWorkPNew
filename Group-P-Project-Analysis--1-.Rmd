@@ -131,19 +131,7 @@ mplot(zerotosixtySLR3, which=2)
 
 
 ```{r}
-kitchen1<- lm(price_in_usd ~ year + engine_size_l + horsepower + torque_lb_ft + x0_60_mph_time_seconds, data=SportsCars) 
-msummary(kitchen1) 
-
-car::vif(kitchen1) #x_60_mph_time_seconds not significant 
-```
-
-
-```{r}
-stepwise <- regsubsets(price_in_usd ~ year + engine_size_l + horsepower + x0_60_mph_time_seconds, data = SportsCars, method = "seqrep", nbest = 1)
-with(summary(stepwise), data.frame(cp, outmat)) #scrapped torque_lb_ft because of high correlation with horsepower 
-
-MLR4<- lm(price_in_usd ~ year + engine_size_l + horsepower, data=SportsCars)
-msummary(MLR4)
-car::vif(MLR4) #best model according to stepwise
+stepwise <- regsubsets(price_in_usd ~ year + engine_size_l + horsepower + torque_lb_ft + x0_60_mph_time_seconds, data = SportsCars, method = "seqrep", nbest = 1)
+with(summary(stepwise), data.frame(cp, outmat))
 ```
 
