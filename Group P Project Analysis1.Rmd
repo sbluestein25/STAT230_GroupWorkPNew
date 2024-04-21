@@ -285,8 +285,8 @@ msummary(bivarcorrected)
 mplot(bivarcorrected, which=1)
 mplot(bivarcorrected, which=2)
 
-bivar3<-lm(logprice ~x0_60_mph_time_seconds * car_make, data=SportsCars)
-msummary(bivar3)
-mplot(bivar3, which=1)
-mplot(bivar3, which=2)
+MLR6<- lm(logprice ~ year + engine_size_l * car_make + horsepower, data=SportsCars)
+msummary(MLR6)
+mplot(MLR6, which = 1)
+mplot(MLR6, which = 2)
 ```
