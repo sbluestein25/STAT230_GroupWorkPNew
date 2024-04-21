@@ -271,3 +271,22 @@ mplot(MLR6, which = 2)
 ```{r}
 mplot(MLR6, which = 4)
 ```
+
+```{r}
+car::vif(aovbivariate2)
+
+bivarEuro<-lm(logprice ~x0_60_mph_time_seconds + horsepower + car_make, data=SportsCars)
+msummary(bivarEuro)
+
+car::vif(bivarEuro)
+
+bivarcorrected<-lm(logprice ~ horsepower * car_make, data=SportsCars)
+msummary(bivarcorrected)
+mplot(bivarcorrected, which=1)
+mplot(bivarcorrected, which=2)
+
+bivar3<-lm(logprice ~x0_60_mph_time_seconds * car_make, data=SportsCars)
+msummary(bivar3)
+mplot(bivar3, which=1)
+mplot(bivar3, which=2)
+```
