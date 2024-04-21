@@ -147,3 +147,71 @@ msummary(MLR4)
 car::vif(MLR4) #best model according to stepwise
 ```
 
+Next, we will attempt to run an ANOVA with the factor car_make, or the car region of origin. The results will allow us to determine if the geographical region of production affects the price enough to add it to a potential multivariate model. This factor has three categories: Asian, European, and Domestic. To get a better sense of this categorical variable, we compared box plots of each category. Immediately, we see that the European cars have a much higher standard deviation than both other categories, but especially domestic cars. Although this could be due to smaller sample sizes of Domestic and Asian car brands, in order to compare the categories at all, we need to check the requisite conditions to run an ANOVA.
+
+```{r}
+gf_boxplot(price_in_usd ~ car_make, data = SportsCars)
+location <- lm(price_in_usd ~ car_make, data = SportsCars)
+favstats(price_in_usd ~ car_make, data = SportsCars)
+```
+
+We then checked the conditions to run an ANOVA. The condition of equal variance is clearly not passed, due to the largest over smallest standard deviation being well over 2 (94260.05/18167.74 = 5.188) and the obvious lack of continuity on the Residuals vs. Fitted plot. Furthermore, the condition of normality is not passed due to the tails of the QQ plot clearly seperating from the line.
+
+```{r}
+mplot(location, which = 1)
+mplot(location, which = 2)
+```
+
+Since we did not pass conditions and still want to run a comparison test on this variable, the next step of action is to attempt a transformation. We attempted to take the natural log of the response variable, price. Although this helped increase our equal variance and pass the standard deviation test (0.579/0.308 = 1.880), we still see a clear lack of normality in the QQ plot.
+
+```{r}
+gf_boxplot(logprice ~ car_make, data = SportsCars)
+loglocation <- lm(logprice ~ car_make, data = SportsCars)
+favstats(logprice ~ car_make, data = SportsCars)
+mplot(loglocation, which = 1)
+mplot(loglocation, which = 2)
+```
+
+Since we could not find a transformation that allowed us to pass conditions for running an ANOVA, we next moved towards running a randomization F-test. This test can help us compare categories across a response variable even when we do not pass conditions for an ANOVA. First, we randomly shuffled the price 10000 times in order to compare the frequency at which a random shuffle (which should have no main effects) will take on the same F-value as we observe in this data set.
+
+```{r}
+set.seed(40)
+randomizedsamples <- do(10000) * (anova(lm(shuffle(price_in_usd) ~ car_make, data = SportsCars))$"F value")
+randomizedsamples <- as.data.frame(randomizedsamples)
+```
+
+We then calculated the baseline F value, which is 77.48.
+
+```{r}
+anova(location)
+origres <- anova(location)$"F value"#
+origres
+```
+
+We then will observe how often our randomly sampled sets end up with an F value close to the 77.48 we see in our original data set. We observe that the random samples do not come close to obtaining an F value that high. In fact, we see almost no F-values over 5.
+
+```{r}
+gf_dens(~ V1, data = randomizedsamples) %>%
+  gf_lims(x = c(0, 25)) %>%
+  gf_labs(title = "Randomization Distribution for Car Make from ANOVA")
+```
+
+Next, we see the probability of getting an F like ours when the null (sports cars produced everywhere have the same price) is true. This value is 0, indicating that we should reject the null. We have evidence, using F-randomization, that there is a significant difference in the average price of a sports car between at least one of these three geographical regions.
+
+```{r}
+pdata(~ V1, origres[1], data = randomizedsamples, lower.tail = FALSE)
+```
+
+Since we got a significant result from the randomization F-test, we then will run a post-Hoc test to determine which categories are significantly different. We ran Tukey's HSD and found evidence that there are significant differences in the average price of sports cars that are produced in Europe vs. Asia (p < 0.001) and significant differences in the average price of cars produced domestically vs. those produced in Europe (p < 0.001).
+
+```{r}
+TukeyHSD(location)
+```
+
+Since there is evidence that European cars are significantly more expensive than Asian or Domestic makes, we will attempt to add an indicator variable to our best multiple linear regression model to determine if it reduces the error. By indicating all European cars with a "1" and all others with a "0", we can add the variable to our model. 
+
+```{r}
+IndSportsCars <- SportsCars %>% mutate(car_make = case_when(
+    car_make %in% c("Asian") ~ 0,
+    car_make %in% c("Domestic") ~ 0,
+    car_make %in% c("European") ~ 1))
