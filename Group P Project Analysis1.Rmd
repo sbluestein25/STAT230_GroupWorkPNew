@@ -250,8 +250,6 @@ mplot(MLR6, which = 4)
 We then checked to see if adding interaction terms to our model improved the fit. Although adding all interaction terms increased the fit to an $R^2$ of 0.86, this model is not parsimonious. The best model we found added an interaction only between engine size and car region of origin, our indicator variable. This increased our $R^2$ value to 0.82 and lowered our standard error to 0.25. Adding the interaction term also appears to improve the model's conditions.
 
 ```{r}
-=======
-```{r include=FALSE}
 car::vif(aovbivariate2)
 
 bivarEuro<-lm(logprice ~x0_60_mph_time_seconds + horsepower + car_make, data=SportsCars)
@@ -264,7 +262,6 @@ msummary(bivarcorrected)
 mplot(bivarcorrected, which=1)
 mplot(bivarcorrected, which=2)
 
->>>>>>> Stashed changes
 MLR6<- lm(logprice ~ year + engine_size_l * car_make + horsepower, data=SportsCars)
 msummary(MLR6)
 ```
