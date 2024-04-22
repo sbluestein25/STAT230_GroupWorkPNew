@@ -1,9 +1,15 @@
 ---
 title: 'Group P: Project Analysis Component'
 author: Sydney Bluestein, Parker Smith, Tate Eppinger, and Juan Perez
-output: pdf_document
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 7
 date: "2024-04-03"
 ---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
 ```{r include=FALSE}
 library(readr)
 library(mosaic)
@@ -18,7 +24,7 @@ library(knitr)
 require("gridExtra")
 Sport_car_price <- read_csv("~/Desktop/STAT230/Sport car price.csv")
 ```
-```{r warning=FALSE}
+```{r include=FALSE}
 Cars <- janitor::clean_names(Sport_car_price)
 Cars <- unique(Cars)
 Cars <- Cars %>% 
@@ -41,19 +47,15 @@ Project Aim: We want to explore which factors contribute to sports car prices in
 Research Question: Do any of the factors above (or a combination of them) predict sports car prices accurately? 
 
 Variables: Car origin (Asian, Domestic, or European) is our categorical variable. Year is a quantitative variable that represents the year the car was made. 0-60 speed is a quantitative variable that represents the time in seconds it takes for the car to go from 0 miles per hour to 60 miles per hour. Torque is a quantitative variable measured in pounds-feet that describes the power of the car’s drivetrain. Horsepower is another quantitative variable measured in foot-pounds/minute representing engine power. Lastly, engine size is a quantitative variable in liters that measures how much gas the car can hold. 
-
-Step 1 – Univariate Analysis: 
-We included a brief univariate analysis in our project proposal. We included density plots of horsepower, torque, engine size, and 0-60. It would be useful to obtain descriptive stats for these quantitative variables using the favstats method. Looking into the quantitative variables’ shape, center, and spread will help orient us toward recognizing typical and unusual values for variables measured in unfamiliar units. Car year is characterized by a box plot. We removed a few cars produced before 2014 since we are attempting to predict sports car prices from the last decade. We also included a bar graph for our categorical variable, car origin. We notice that European cars are most commonly represented in this data set. However, there are still enough Asian and domestic sports cars to make this variable worthwhile. We will use the tally function to create a table illustrating the exact distribution of cars originating from Europe, Domestic, and Asia.
-```{r warning=FALSE}
+```{r include = FALSE}
 m1<-gf_dens(~ horsepower, data = SportsCars, color = "blue")        
 m2<-gf_dens(~ torque_lb_ft, data = SportsCars, color = "deepskyblue")
 m3<-gf_dens(~ engine_size_l, data = SportsCars, color = "pink2")
 m4<-gf_dens(~ x0_60_mph_time_seconds, data = SportsCars,  xlab="0 to 60mph time in seconds", color = "purple")
-```
-
-```{r warning=FALSE}
 m5<-gf_bar (~car_make, data= SportsCars)
 m6<-gf_boxplot(~year, data=SportsCars)
+```
+```{r include=FALSE}
 kable(favstats(~year, data = SportsCars), caption = "Year")  #IQR test 1.5, 1.5(IQR=1)=1.5, data range from 2019 to 2023
 kable(favstats(~horsepower, data = SportsCars), caption = "Horsepower")
 kable(favstats(~torque_lb_ft, data = SportsCars), caption = "Torque (lb-ft)")
@@ -61,25 +63,24 @@ kable(favstats(~engine_size_l, data = SportsCars), caption = "Engine Size")
 kable(favstats(~x0_60_mph_time_seconds, data = SportsCars), caption = "0 to 60 mph time")
 grid.arrange(m1, m2, m3, m4, m5, m6, ncol=3, heights=c(2, 2, 2))
 ```
-Horsepower - The plot shows a bimodal distribution with peaks around 450 horsepower and 600 horsepower, indicating two prevalent groups of sports cars with distinct power outputs in this dataset. The median of 505 horsepower indicates that half of the cars have horsepower above this value, and half below, showcasing the central tendency of the distribution. The maximum horsepower is 797, highlighting the presence of very high-powered vehicles within the dataset. The mean horsepower is approximately 527.6345, which is close to the median, reinforcing the bimodal distribution seen in the density plot as it suggests a symmetry in the distribution of values. Additionally, the standard deviation of about 132.5269 horsepower indicates a moderate spread around the mean.
+Horsepower - The plot shows a bimodal distribution with peaks around 450 horsepower and 600 horsepower, indicating two prevalent groups of sports cars with distinct power outputs in this dataset. The IQR is 209.5 lb-ft/minute, demonstrating wide variability of horsepower in this dataset.
 
-Torque - The density plot for the torque (measured in pound-feet) of sports cars in the dataset shows a bimodal distribution with peaks roughly around 300 and 500 lb-ft, suggesting two prevalent groups of sports cars based on their torque characteristics. The minimum torque is 151 lb-ft, indicating the lowest torque present in a sports car in this dataset. The median of 468 lb-ft represents the middle value, where half the cars have more torque and the other half have less. The maximum value is 738 lb-ft, showcasing some sports cars with very high torque outputs. The mean torque is around 472.5279 lb-ft, which is very close to the median, indicating a relatively symmetrical distribution around the central value. The standard deviation of approximately 126.1966 lb-ft indicates a moderate variability in the torque figures across the dataset.
+Torque - The density plot for the torque (measured in pound-feet) of sports cars in the dataset is mostly normally distributed. 
+The mean torque is around 472.5 lb-ft. The standard deviation of approximately 126.2 lb-feet indicates a moderate variability in the torque figures across the dataset.
 
-Engine Size - The density plot for engine size (in liters) reveals a bimodal distribution with two prominent peaks: one just below 4 liters and another around 5 liters. The minimum size of 1.5 liters and a maximum of 8.4 liters, suggesting a wide range of engine sizes among the sports cars. The median engine size is 4 liters, which lies between the two peaks of the density plot, and the mean engine size is approximately 4.27 liters, indicating a slight skew to the right. The standard deviation is around 1.33 liters, which points to a relatively wide spread of engine sizes in the dataset. The mean being greater than the median suggests a right skew in the data, indicating that there are sports cars with larger engine sizes that are pulling the average to the right. This skew is likely not very strong but does suggest the presence of more sports cars with higher engine sizes than those with smaller ones.
+Engine Size - The density plot for engine size (in liters) reveals a bimodal distribution with two prominent peaks: one just below 4 liters and another around 6 liters. The IQR of 1.7 liters suggests moderate to high variability of engine sizes among these sports cars. 
 
-0 to 60 MPH Time - The density plot for the 0 to 60 mph acceleration timesshows that the most common acceleration time is around 3.5 seconds, which is where the peak of the density occurs. The range of acceleration times is from 2.5 seconds to 6.5 seconds, with a median time of 3.6 seconds. The mean acceleration time is slightly higher at 3.775804 seconds, suggesting a slight right skew in the distribution. This is further supported by the mean being greater than the median, implying that there are more sports cars with slightly slower acceleration times pulling the average to the right. The standard deviation of about 0.673926 seconds shows a relatively tight clustering of times around the mean.
+0 to 60 MPH Time - The distribution of 0-60 mph time is mostly normally distributed. The mean acceleration time is 3.78 seconds (compared to median of 3.6 seconds), suggesting a very slight right skew, though this distribution is mostly normal. The standard deviation is 0.67 seconds. 
 
-Step 2 – Bivariate Analysis: 
-We will begin with simple linear regression to gauge which explanatory variables help predict sports car prices. It will be time-efficient to begin with GGpairs as a summary of the relationships between our explanatory variables and sports car prices. Upon the first glimpse, the GGpairs plot demonstrates that horsepower (r=0.648) and 0-60 (r=-0.554) may be helpful predictors for sports car prices. We plan to explore this relationship further by creating simple linear regression models. To check for linearity, we can look either at the SLR plot or the residuals vs. fitted plot to ensure the relationship between our predictor variable and sports car price is best described as linear. Independence is not a condition we can assume from a plot. (We have very little information regarding the origin of this dataset, so we will have to proceed with caution). Looking at whether the data points fit well on the expected line QQ plot line will allow us to decide whether the normality condition is satisfied. We will confirm homoscedasticity for the equal variance condition by looking for a seemingly random distribution of points on the residuals vs. fitted plot. If we encounter any issues with conditions, we will look into removing potential outliers or transforming the data if necessary. 
+Car Origin: We also included a bar graph for our categorical variable, car origin. We notice that European cars are most commonly represented in this data set. However, there are still enough Asian and domestic sports cars to make this variable worthwhile. 
 
-```{r}
+```{r include=FALSE}
 ggpairs(SportsCars, columns = c(3:8))
 ```
 
-Step 3 – Model Building and Variable Selection: Once we have looked into SLR, we will turn to multiple linear regression.  Looking at the GGpairs plot, we notice many potential pairs of predictors run the risk of being collinear. (torque and horsepower, 0-60 and horsepower, and horsepower and engine size). We can run a VIF test if we choose to include variables that may be collinear to confirm we have created a stable model. We may use an automated variable selection method (maybe stepwise, so we get the best predictors at every stage) to delineate which combination of explanatory variables will help predict sports car prices best. We will then weigh the models’ parsimony with adjusted R-squared values and Mallow’s Cp to determine the best model(s).  If we have a potential outlier, we can use a Cook’s distance plot to determine if the point is unusual enough to remove from our model.
 
-Regarding our categorical variable, we would like to run an ANOVA test to determine if the mean sports car price differs based on its region of origin. Suppose the ANOVA test is associated with a significant F statistic. We will then run a Tukey test (or a similar multiple comparison test) to determine which region(s) of origin have significantly different sports car prices. The results from this multiple comparison test will help us determine how we need to adjust our model, i.e., for what region of origin do we need to account for higher sports car prices relative to the other regions? Perhaps we would want to look into some interaction terms as well. 
-
+Step 2 – Bivariate Analysis: 
+We will begin with simple linear regression to gauge which explanatory variables help predict sports car prices. Upon the first glimpse, the GGpairs plot demonstrates that horsepower (r=0.648) and 0-60 mph (r=-0.554) may be helpful predictors for sports car prices. These models can be found below.
 
 SLR:
 Horsepower and 0-60 appeared to be our strongest predictors for car price. However the scatterplot of horsepower vs. car price proved to be pretty curvy. I attempted to transform the data by predicting log (car price) rather than car price, log(horsepower) instead of horsepower, etc. However, conditions still were not met. Similarly for 0-60, conditions were not met for SLR. I removed an outlier, representing a car with extremely high torque and horsepower. I believed this point was pulling the regression line down. After removing this point, I then transformed the data by having -1/sqrt(0-60) predict price. However, conditions for SLR still failed to be met. I then wanted to check if using horsepower and 0-60 together would provide a better fitting model than the predictors on their own. Most of the points in the fitted vs. residuals plot are shifted to the right, demonstrating that there is not perfectly equal variance. Also the QQ plot appears curvy, however it looks less sigmoidal than any of the SLR model QQ plots. Though conditions are still not met perfectly, this model fits better than either of the SLR models. We will consider this bivariate model with caution.
@@ -88,28 +89,47 @@ Horsepower and 0-60 appeared to be our strongest predictors for car price. Howev
 SportsCars <- mutate(SportsCars, logprice = log(price_in_usd))
 horsepowerSLR2<- lm(logprice ~horsepower, data=SportsCars) 
 msummary(horsepowerSLR2)
-mplot(horsepowerSLR2, which=1:2)
+```
+```{r include=FALSE}
+c<-gf_point(logprice ~horsepower, data=SportsCars) %>% gf_lm()
+a <- mplot(horsepowerSLR2, which=1)
+b <- mplot(horsepowerSLR2, which=2)
+
+```
+```{r}
+grid.arrange(c, a, b, ncol = 3)
 ```
 
 
-```{r}
+```{r include=FALSE}
 SportsCars <- filter(SportsCars, torque_lb_ft<1299)
 SportsCars <- mutate(SportsCars, logprice = log(price_in_usd)) 
-gf_point(logprice ~x0_60_mph_time_seconds, data=SportsCars) %>%
-gf_lm()
 zerotosixtymod<-lm(logprice ~x0_60_mph_time_seconds, data=SportsCars)
-mplot(zerotosixtymod, which=1)
-mplot(zerotosixtymod, which=2)
+```
+```{r include=FALSE}
+a <- mplot(zerotosixtymod, which=1)
+b <- mplot(zerotosixtymod, which=2)
+c <- gf_point(logprice ~x0_60_mph_time_seconds, data=SportsCars) %>%
+  gf_lm()
+```
+```{r}
+grid.arrange(c, a, b, ncol = 3)
 ```
 
 
-```{r}
+```{r include=FALSE}
 aovbivariate2<-lm(logprice ~x0_60_mph_time_seconds + horsepower, data=SportsCars) 
 msummary(aovbivariate2)
-mplot(aovbivariate2, which=1)
-mplot(aovbivariate2, which=2)
+```
+```{r include=FALSE}
+a <- mplot(aovbivariate2, which=1)
+b <- mplot(aovbivariate2, which=2)
 ```
 ```{r}
+grid.arrange(a, b, ncol = 2)
+```
+
+```{r include=FALSE}
 kitchen1<- lm(price_in_usd ~ year + engine_size_l + horsepower + torque_lb_ft + x0_60_mph_time_seconds, data=SportsCars) 
 msummary(kitchen1) 
 
@@ -117,60 +137,70 @@ car::vif(kitchen1) #x_60_mph_time_seconds not significant
 ```
 
 
-```{r}
-stepwise <- regsubsets(price_in_usd ~ year + engine_size_l + horsepower + x0_60_mph_time_seconds, data = SportsCars, method = "seqrep", nbest = 1)
+```{r include=FALSE}
+stepwise <- regsubsets(logprice ~ year + engine_size_l + horsepower + x0_60_mph_time_seconds, data = SportsCars, method = "seqrep", nbest = 1)
 with(summary(stepwise), data.frame(cp, outmat)) #scrapped torque_lb_ft because of high correlation with horsepower 
-
-favmod<- lm(price_in_usd ~ year + engine_size_l + horsepower, data=SportsCars)
+```
+```{r}
+favmod<- lm(logprice ~ year + engine_size_l + horsepower, data=SportsCars)
 msummary(favmod)
 car::vif(favmod) #best model according to stepwise
-
-mplot(favmod, which=1) 
-mplot(favmod, which=2) 
+```
+```{r include = FALSE}
+a <- mplot(favmod, which=1) 
+b <- mplot(favmod, which=2) 
+```
+```{r}
+grid.arrange(a, b, ncol = 2)
 ```
 
-Next, we will attempt to run an ANOVA with the factor car_make, or the car region of origin. The results will allow us to determine if the geographical region of production affects the price enough to add it to a potential multivariate model. This factor has three categories: Asian, European, and Domestic. To get a better sense of this categorical variable, we compared box plots of each category. Immediately, we see that the European cars have a much higher standard deviation than both other categories, but especially domestic cars. Although this could be due to smaller sample sizes of Domestic and Asian car brands, in order to compare the categories at all, we need to check the requisite conditions to run an ANOVA.
+Next, we will attempt to run an ANOVA with the factor car_make, or the car region of origin. The results will allow us to determine if the geographical region of production affects the price enough to add it to a potential multivariate model. This factor has three categories: Asian, European, and Domestic. To get a better sense of this categorical variable, we compared box plots of each category. Immediately, we see that the European cars have a much higher standard deviation than both other categories, but especially domestic cars. Although this could be due to smaller sample sizes of Domestic and Asian car brands, in order to compare the categories at all, we need to check the requisite conditions to run an ANOVA. The condition of equal variance is clearly not passed, due to the largest over smallest standard deviation being well over 2 (94260.05/18167.74 = 5.188) and the obvious lack of continuity on the Residuals vs. Fitted plot. Furthermore, the condition of normality is not passed due to the tails of the QQ plot clearly separating from the line.
 
 ```{r}
-gf_boxplot(price_in_usd ~ car_make, data = SportsCars)
 location <- lm(price_in_usd ~ car_make, data = SportsCars)
 favstats(price_in_usd ~ car_make, data = SportsCars)
 ```
-
-We then checked the conditions to run an ANOVA. The condition of equal variance is clearly not passed, due to the largest over smallest standard deviation being well over 2 (94260.05/18167.74 = 5.188) and the obvious lack of continuity on the Residuals vs. Fitted plot. Furthermore, the condition of normality is not passed due to the tails of the QQ plot clearly seperating from the line.
-
-```{r}
-mplot(location, which = 1)
-mplot(location, which = 2)
+```{r include=FALSE}
+c <- gf_boxplot(price_in_usd ~ car_make, data = SportsCars)
+a <- mplot(location, which=1)
+b <- mplot(location, which=2)
+```
+```{r} 
+grid.arrange(c, a, b, ncol = 3)
 ```
 
 Since we did not pass conditions and still want to run a comparison test on this variable, the next step of action is to attempt a transformation. We attempted to take the natural log of the response variable, price. Although this helped increase our equal variance and pass the standard deviation test (0.579/0.308 = 1.880), we still see a clear lack of normality in the QQ plot.
 
 ```{r}
-gf_boxplot(logprice ~ car_make, data = SportsCars)
 loglocation <- lm(logprice ~ car_make, data = SportsCars)
 favstats(logprice ~ car_make, data = SportsCars)
-mplot(loglocation, which = 1)
-mplot(loglocation, which = 2)
+```
+```{r include=FALSE}
+c <- gf_boxplot(logprice ~ car_make, data = SportsCars)
+a <- mplot(loglocation, which=1)
+b <- mplot(loglocation, which=2)
+```
+```{r} 
+grid.arrange(c, a, b, ncol = 3)
 ```
 
-Since we could not find a transformation that allowed us to pass conditions for running an ANOVA, we next moved towards running a randomization F-test. This test can help us compare categories across a response variable even when we do not pass conditions for an ANOVA. First, we randomly shuffled the price 10000 times in order to compare the frequency at which a random shuffle (which should have no main effects) will take on the same F-value as we observe in this data set.
 
-```{r}
+Since we could not find a transformation that allowed us to pass conditions for running an ANOVA, we next moved towards running a randomization F-test. This test can help us compare categories across a response variable even when we do not pass conditions for an ANOVA. First, we randomly shuffled the price 10000 times in order to compare the frequency at which a random shuffle (which should have no main effects) will take on the same F-value as we observe in this data set. Since we consistently found that a transformed response variable log(price) leads to better fits and improved linear model conditions, we only will show the randomization F-test for the average log(price) of each geographical region.
+
+```{r include = FALSE}
 set.seed(40)
-randomizedsamples <- do(10000) * (anova(lm(shuffle(price_in_usd) ~ car_make, data = SportsCars))$"F value")
+randomizedsamples <- do(10000) * (anova(lm(shuffle(logprice) ~ car_make, data = SportsCars))$"F value")
 randomizedsamples <- as.data.frame(randomizedsamples)
 ```
 
-We then calculated the baseline F value, which is 77.48.
+We then calculated the baseline F value, which is 141.02.
 
 ```{r}
-anova(location)
-origres <- anova(location)$"F value"#
+origres <- anova(loglocation)$"F value"#
 origres
 ```
 
-We then will observe how often our randomly sampled sets end up with an F value close to the 77.48 we see in our original data set. We observe that the random samples do not come close to obtaining an F value that high. In fact, we see almost no F-values over 5.
+We then will observe how often our randomly sampled sets end up with an F value close to the 141.02 we see in our original data set. We observe that the random samples do not come close to obtaining an F value that high. In fact, we see almost no F-values over 5.
 
 ```{r}
 gf_dens(~ V1, data = randomizedsamples) %>%
@@ -178,80 +208,78 @@ gf_dens(~ V1, data = randomizedsamples) %>%
   gf_labs(title = "Randomization Distribution for Car Make from ANOVA")
 ```
 
-Next, we see the probability of getting an F like ours when the null (sports cars produced everywhere have the same price) is true. This value is 0, indicating that we should reject the null. We have evidence, using F-randomization, that there is a significant difference in the average price of a sports car between at least one of these three geographical regions.
+Next, we see the probability of getting an F like ours when the null (sports cars produced everywhere have the same log price) is true. This value is 0, indicating that we should reject the null. We have evidence, using F-randomization, that there is a significant difference in the average log price of a sports car between at least one of these three geographical regions.
 
 ```{r}
 pdata(~ V1, origres[1], data = randomizedsamples, lower.tail = FALSE)
 ```
 
-Since we got a significant result from the randomization F-test, we then will run a post-Hoc test to determine which categories are significantly different. We ran Tukey's HSD and found evidence that there are significant differences in the average price of sports cars that are produced in Europe vs. Asia (p < 0.001) and significant differences in the average price of cars produced domestically vs. those produced in Europe (p < 0.001).
+Since we got a significant result from the randomization F-test, we then will run a post-Hoc test to determine which categories are significantly different. We ran Tukey's HSD and found evidence that there are significant differences in the average log price of sports cars that are produced in Europe vs. Asia (p < 0.001) and significant differences in the average log price of cars produced domestically vs. those produced in Europe (p < 0.001). We did not find evidence of a significant difference in the average log price of cars produced domestically vs those produced in Asia (p = 0.93).
 
 ```{r}
-TukeyHSD(location)
+TukeyHSD(loglocation)
 ```
 
-Since there is evidence that European cars are significantly more expensive than Asian or Domestic makes, we will attempt to add an indicator variable to our best multiple linear regression model to determine if it reduces the error. By indicating all European cars with a "1" and all others with a "0", we can add the variable to our model. 
+Since there is evidence that the average log price of European cars is significantly higher than Asian or Domestic makes, we will attempt to add an indicator variable to our best multiple linear regression model to determine if it reduces the error. By indicating all European cars with a "1" and all others with a "0", we can add the variable to our model.
 
-```{r}
+```{r include = FALSE}
 SportsCars <- SportsCars %>% mutate(car_make = case_when(
     car_make %in% c("Asian") ~ 0,
     car_make %in% c("Domestic") ~ 0,
     car_make %in% c("European") ~ 1))
-MLR5<- lm(price_in_usd ~ year + engine_size_l + horsepower + car_make, data=SportsCars)
-msummary(MLR5)
-mplot(MLR5, which = 1)
-mplot(MLR5, which = 2)
 ```
-
-```{r}
-set.seed(40)
-randomizedsamples1 <- do(10000) * (anova(lm(shuffle(logprice) ~ car_make, data = SportsCars))$"F value")
-randomizedsamples1 <- as.data.frame(randomizedsamples1)
-```
-
-```{r}
-anova(loglocation)
-origres1 <- anova(loglocation)$"F value"#
-origres1
-```
-
-```{r}
-gf_dens(~ V1, data = randomizedsamples1) %>%
-  gf_lims(x = c(0, 25)) %>%
-  gf_labs(title = "Randomization Distribution for Car Make from ANOVA")
-```
-
-```{r}
-pdata(~ V1, origres[1], data = randomizedsamples1, lower.tail = FALSE)
-```
-
-
 ```{r}
 MLR6<- lm(logprice ~ year + engine_size_l + horsepower + car_make, data=SportsCars)
 msummary(MLR6)
-mplot(MLR6, which = 1)
-mplot(MLR6, which = 2)
 ```
+```{r include=FALSE}
+a <- mplot(MLR6, which=1)
+b <- mplot(MLR6, which=2)
+```
+```{r} 
+grid.arrange(a, b, ncol = 2)
+```
+
+We found that this model was significantly better than the model without the indicator variable, as the $R^2$ value increased from 0.50 to 0.76. The residual standard error decreased from 0.47 to 0.32. Although this model is good and passes conditions, we have a couple potential outliers to take a look at. Point #10 in particular looks to be a potential outlier based on the residuals vs. fitted graph. We ran a plot of Cook's distance to determine which, if any, of these points could potentially be removed. However, none of the points even came close to the threshold of a moderately influential point of >0.5. Therefore, we did not remove any additional observations.
 
 ```{r}
 mplot(MLR6, which = 4)
 ```
 
+We then checked to see if adding interaction terms to our model improved the fit. Although adding all interaction terms increased the fit to an $R^2$ of 0.86, this model is not parsimonious. The best model we found added an interaction only between engine size and car region of origin, our indicator variable. This increased our $R^2$ value to 0.82 and lowered our standard error to 0.25. Adding the interaction term also appears to improve the model's conditions.
+
 ```{r}
-car::vif(aovbivariate2)
-
-bivarEuro<-lm(logprice ~x0_60_mph_time_seconds + horsepower + car_make, data=SportsCars)
-msummary(bivarEuro)
-
-car::vif(bivarEuro)
-
-bivarcorrected<-lm(logprice ~ horsepower * car_make, data=SportsCars)
-msummary(bivarcorrected)
-mplot(bivarcorrected, which=1)
-mplot(bivarcorrected, which=2)
-
 MLR6<- lm(logprice ~ year + engine_size_l * car_make + horsepower, data=SportsCars)
 msummary(MLR6)
-mplot(MLR6, which = 1)
-mplot(MLR6, which = 2)
+```
+```{r include = FALSE}
+a <- mplot(MLR6, which = 1)
+b <- mplot(MLR6, which = 2)
+```
+```{r}
+grid.arrange(a, b, ncol = 2)
+```
+
+
+We then added the indicator variable (European vs. not European) to our best bivariate model as well. According to the t-test, 0-60 time was not a significant predictor (p = 0.89), so we chose to remove that in future models. We then checked for colinearity using VIF, finding that our variables were not colinear.
+
+```{r}
+car::vif(aovbivariate2)
+bivarEuro<-lm(logprice ~x0_60_mph_time_seconds + horsepower + car_make, data=SportsCars)
+msummary(bivarEuro)
+car::vif(bivarEuro)
+```
+
+After removing 0-60 time, we then checked to see if an interaction improved the fit of our model. We found that the inclusion of an interaction term between horsepower and car region improved the $R^2$ from 0.75 to 0.80 and decreased the standard error from 0.33 to 0.30. Furthermore, according to the t-test, the interaction term is significantly contributing the the model (p < 0.001).
+
+```{r}
+bivarcorrected<-lm(logprice ~ horsepower * car_make, data=SportsCars)
+msummary(bivarcorrected)
+```
+```{r include=FALSE}
+a <- mplot(bivarcorrected, which=1)
+b <- mplot(bivarcorrected, which=2)
+```
+```{r} 
+grid.arrange(a, b, ncol = 2)
 ```
