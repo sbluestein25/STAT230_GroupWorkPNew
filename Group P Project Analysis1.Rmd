@@ -128,23 +128,22 @@ b <- mplot(aovbivariate2, which=2)
 ```{r}
 grid.arrange(a, b, ncol = 2)
 ```
-
-```{r include=FALSE}
-kitchen1<- lm(price_in_usd ~ year + engine_size_l + horsepower + torque_lb_ft + x0_60_mph_time_seconds, data=SportsCars) 
+For MLR, we started by running a kitchen sink model to check for collinearity and significant predictors. We noticed that in the kitchen sink model horsepower had a high vif above 5. From previous gg_pairs analysis we knew that horsepower was highly correlated with x0_60_mph_time_seconds and torque_lb_ft. We decided to try the stepwise selection to see what the best model would be, excluding x0_60_mph_time_seconds and torque_lb_ft. We noticed that the three variable model of year, engine_size_l and horsepower, had the lowest cp value of 4, with an multiple r^2 of 0.502 (only .03 less than kitchen sink), and all vifs well under 5. We decided that this was our best model for predicting logprice. 
+```{r include = FALSE}
+kitchen1<- lm(logprice ~ year + engine_size_l + horsepower + torque_lb_ft + x0_60_mph_time_seconds, data=SportsCars) 
 msummary(kitchen1) 
 
-car::vif(kitchen1) #x_60_mph_time_seconds not significant 
+car::vif(kitchen1) 
 ```
 
-
-```{r include=FALSE}
-stepwise <- regsubsets(logprice ~ year + engine_size_l + horsepower + x0_60_mph_time_seconds, data = SportsCars, method = "seqrep", nbest = 1)
-with(summary(stepwise), data.frame(cp, outmat)) #scrapped torque_lb_ft because of high correlation with horsepower 
+```{r include = FALSE}
+stepwise <- regsubsets(logprice ~ year + engine_size_l + horsepower, data = SportsCars, method = "seqrep", nbest = 1)
+with(summary(stepwise), data.frame(cp, outmat)) #scrapped torque_lb_ft & x0_60_mph_time_seconds because of high correlation with horsepower 
 ```
-```{r}
-favmod<- lm(logprice ~ year + engine_size_l + horsepower, data=SportsCars)
+```{r include = FALSE}
+favmod<- lm(logprice ~  year + engine_size_l + horsepower, data=SportsCars)
 msummary(favmod)
-car::vif(favmod) #best model according to stepwise
+car::vif(favmod) 
 ```
 ```{r include = FALSE}
 a <- mplot(favmod, which=1) 
