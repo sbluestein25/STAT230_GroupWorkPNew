@@ -1,0 +1,99 @@
+---
+title: 'Group P: Project Report'
+author: Sydney Bluestein, Parker Smith, Tate Eppinger, and Juan Perez
+output: 
+  pdf_document:
+    fig_height: 4
+    fig_width: 8
+date: "04-28-2024"
+geometry: margin=0.8cm
+---
+\fontsize{7}{7}
+```{r setup, include = FALSE}
+par(mar = c(1, 1, 1, 1))
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+
+```
+```{r include=FALSE}
+library(readr)
+library(mosaic)
+library(mosaicData)
+library(GGally)
+library(Stat2Data)
+library(leaps)
+library(broom)
+library(rvest)
+library(methods)
+library(knitr)
+require("gridExtra")
+Sport_car_price <- read_csv("~/Desktop/STAT230/Sport car price.csv")
+require(knitr)
+opts_chunk$set(
+  tidy=FALSE,     
+  size="small"  
+)
+options(digits=3) 
+```
+```{r include=FALSE}
+Cars <- janitor::clean_names(Sport_car_price)
+Cars <- unique(Cars)
+Cars <- Cars %>% 
+  filter(!grepl("Electric", engine_size_l)) %>% 
+  mutate(across(engine_size_l:x0_60_mph_time_seconds, as.numeric))
+Cars2<-Cars[-c(94, 150, 154, 409),] #deletes middle eastern cars and super old car
+Cars3<-filter(Cars2, price_in_usd<500000) #removed data from IQR test below
+Cars4<-na.omit(Cars3)
+## MAR: Recategorized into "Asian", "Domestic", and "European"
+SportsCars <- Cars4 %>% mutate(car_make = case_when(
+    car_make %in% c("Acura", "Kia"  , "Lexus"  , "Mazda"  , "Nissan" , "Subaru" , "Toyota") ~ "Asian",
+    car_make %in% c("Ford" , "Chevrolet" , "Dodge") ~ "Domestic",
+    car_make %in% c("Alfa Romeo" , "Alpine" , "Ariel" , "Aston Martin" , "Audi" , "Bentley", "BMW", "Bugatti", "Ferrari", "Jaguar", "Koenigsegg", "Lamborghini", "Lotus", "Maserati", "McLaren", "Mercedes-AMG", "Mercedes-Benz", "Pagani", "Polestar", "Porsche", "Rimac", "Rolls-Royce", "TVR", "Ultima" ) ~ "European"))
+```
+
+Does “what’s under the hood” matter when predicting sports car prices in America? vroom vroom
+
+Group P: Sydney Bluestein, Tate Eppinger, Juan Perez, and Parker Smith
+
+
+Abstract:
+
+
+
+
+
+
+
+Background and Meaning:
+
+Who doesn't love a cool sports car? Sports cars are notoriously smaller than regular cars and are designed to reach high speeds. They are performance cars, meaning they do not provide added luxury for passengers (CleanTools). Parker's dad and Sydney's grandfather are particularly interested in car shows/collecting. Therefore, we grew up listening to our fair share of "why this car will be worth millions one day." But they aren't the only ones; over 55,000 Americans bought sports cars in 2022 (GoodCarBadCar). We've always wondered, what makes these cars so much more expensive than the cars we drive everyday? One source says that sports cars are more expensive because of their powerful engines and technology (RapidMTs). Sports cars also require special accessories like tires to keep up with the top accelerations they reach. Buying a sports car is a big investment for most people. Creating a model that could predict sports car prices may help Americans realize when they are being overcharged/scammed. If someone has uses our model to predict the price of the sports car they want, but the dealer is asking 50,000 more dollars than the expected price, it is our hope that they could find a better deal. We hypothesized that a combination of technical characteristics such as horsepower and 0-60 mph time along with the make/country of origin would provide a useful model for predicting sports car prices in America. 
+
+
+
+
+Methods: 
+1.Data: 
+
+We have very little information about this dataset. We reached out to the owner of the dataset on Kaggle, but we did not receive a response. Thus, we have no information on how the data was selected. We thus must use when expanding this model to cars outside of this dataset. The dataset includes sports car that were priced in America (US dollars) and technical/performance measures of the car. Our target audience is those looking to buy sports cars (produced in the last decade) in America for the right price.  
+
+
+2. Variables: 
+
+3. Statistical Methods:
+
+We began by looking at the distribution of our predictors using descriptive statistics such as density plots, box plots, and favstats output. Looking at these measures helped familiarize ourselves with variables (and units) such as torque that we were not very familiar with. We created a preliminary GGpairs plot to give us a sense of which variables may be strong predictors for sports car price and where we should beware of collinearity. We then ran simple linear regression models with horsepower and 0-60 mph time predicting car price. After conditions failed to be met for simple linear regression, we decided to make the switch to predicting log(sports car price) for all of our potential models. We then moved onto multiple linear regression, using stepwise regression as our method to generate models. Looking to improve our models, we ran an ANOVA as a way to decide if including our categorical variable, car origin, could help account for some variability in log car price. After conditions for ANOVA failed to be met, we went onto run a randomization F-test. After a significant randomization F-test, we used Tukey's Post-Hoc test to determine which regions of origin had significantly different average log car prices. Results from the Tukey test were considered in the process of generating our final model.  
+
+
+Results:
+
+
+
+
+
+Interpretation:
+
+
+
+
+
+Conclusion:
+
